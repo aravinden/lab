@@ -1,0 +1,5 @@
+---
+- name: Install Java
+  apt: name=openjdk-8-jre* state=present update_cache=yes 
+  become: true
+  become_method: sudo

@@ -1,0 +1,35 @@
+---
+- name: Create Tomcat group
+  group: name=tomcat state=present
+  become: true
+  become_method: sudo
+
+- name: Add user tomcat 
+  user: name=tomcat group=tomcat home=/opt/tomcat 
+  become: true
+  become_method: sudo
+
+#- name: Download tomcat zip
+#  get_url: url=http://mirror.fibergrid.in/apache/tomcat/tomcat-8/v8.5.15/bin/apache-tomcat-8.5.15.zip dest=/tmp/apache-tomcat-8.5.15.zip
+#  become: true
+
+- name: Extract tomcat
+  unarchive: src=/home/qa/apache-tomcat-8.5.15.zip dest=/opt/tomcat copy=no
+  become: true
+
+- name: Change ownership of tomcat installation directory
+  file: path=/opt/tomcat/ owner=tomcat group=tomcat state=directory recurse=yes
+  become: true
+
+#- name: Setup tomcat configuration
+#  copy: src=conf_file/tomcat_server_http.xml dest=/opt/tomcat/apache-tomcat-7.0.61/conf/server.xml
+#  become: true
+#  become_user: tomcat
+
+- name: Setup the tomcat init script
+  copy: src=conf_file/tomcat.service dest=/etc/systemd/system/tomcat.service
+  become: true
+
+- name: Start tomcat services
+  service: name=tomcat state=started 
+  become: true
